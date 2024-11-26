@@ -26,12 +26,10 @@ using ldb = long double; //100 ceros pero poca precision decimal
 
 using cd = complex<double>;
 const double PI = acos(-1);
-
 void fft(vector<cd> & a, bool invert) {
     int n = a.size();
     if (n == 1)
         return;
-
     vector<cd> a0(n / 2), a1(n / 2);
     for (int i = 0; 2 * i < n; i++) {
         a0[i] = a[2*i];
@@ -39,7 +37,6 @@ void fft(vector<cd> & a, bool invert) {
     }
     fft(a0, invert);
     fft(a1, invert);
-
     double ang = 2 * PI / n * (invert ? -1 : 1);
     cd w(1), wn(cos(ang), sin(ang));
     for (int i = 0; 2 * i < n; i++) {
@@ -53,20 +50,19 @@ void fft(vector<cd> & a, bool invert) {
     }
 }
 
-vector<int> multiply(vector<int> const& a, vector<int> const& b) {
+
+vi multiply(vi const& a, vi const& b) {
     vector<cd> fa(a.begin(), a.end()), fb(b.begin(), b.end());
     int n = 1;
-    while (n < a.size() + b.size()) 
+    while (n < a.size() + b.size())
         n <<= 1;
     fa.resize(n);
     fb.resize(n);
-
     fft(fa, false);
     fft(fb, false);
     for (int i = 0; i < n; i++)
         fa[i] *= fb[i];
     fft(fa, true);
-
     vector<int> result(n);
     for (int i = 0; i < n; i++)
         result[i] = round(fa[i].real());
@@ -74,23 +70,24 @@ vector<int> multiply(vector<int> const& a, vector<int> const& b) {
 }
 
 int main() {
-    ios_base::sync_with_stdio(false);
-    cin.tie(nullptr);
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
     int n; cin >> n;
-    vi v(100001);
-    for(int i = 0; i < n; i++) {
-        int a; cin >> a;
-        a += 50000;
-        v[a]++;
+    vi a(100001), b(100001), v(n);
+    rep(i,0,n) {
+        int x; cin >> x;
+        a[x + 50000]++; b[x + 50000]++;
+        v[i] = x;
     }
-    vi w = multiply(v, v);
-    for(int i = 50000; i >= 0; i--) {
-        if(v[2 * v[i]] > 0) w[2 * v[i]]--;
-    }
+    vi res = multiply(a, b);
     ll sol = 0;
-    for(int i = 0; i < 100001; i++) {
-        if(v[i] > 0) sol += w[i];
+    for(int x : v) {
+        if(res[x + 100000] > 0)
+            sol += res[x + 100000];
     }
-    cout << sol << endl;
+    for(int x : v) {
+        if(a[2 * x + 50000] > 0) sol--;
+    }
+    cout << sol << '\n';
     return 0;
 }
