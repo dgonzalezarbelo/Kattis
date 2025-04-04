@@ -1,0 +1,1 @@
+print('\n'.join(f"{k} {(n*(n+1))//2} {n*n} {n*(n+1)}" for _ in range(int(input())) for k,n in [map(int, input().split())]))

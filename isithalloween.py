@@ -1,0 +1,1 @@
+print("yup" if list(map(str, input().split())) in [["OCT", "31"], ["DEC", "25"]] else "nope")
